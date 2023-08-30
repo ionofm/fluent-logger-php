@@ -309,12 +309,16 @@ class FluentLogger implements LoggerInterface
      *
      * @throws \Exception
      */
-    protected function connect()
+    public function connect()
     {
         $connect_options = \STREAM_CLIENT_CONNECT;
         if ($this->getOption("persistent", false)) {
             $connect_options |= \STREAM_CLIENT_PERSISTENT;
         }
+
+        set_error_handler(function($err_no, $err_str){
+            // don't do anything, this is simply to surpress warning messages thrown by php when `stream_socket_client` can't connect to a host.
+        }, E_WARNING);
 
         // could not suppress warning without ini setting.
         // for now, we use error control operators.
